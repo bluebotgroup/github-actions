@@ -1,0 +1,52 @@
+name: Semantic Release
+
+on:
+  workflow_call:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify dependency signatures
+        run: npm audit signatures
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx semantic-release
+          # Extract the published version from the log if present
+          if grep -q 'Published release:' release.log; then
+            version=$(grep 'Published release:' release.log | tail -1 | awk '{print $3}')
+            echo "VERSION=$version" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Slack notification
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": ":sunglasses: *${VERSION}* of *${{ github.repository }}* released by *${{ github.actor }}*"}}]}' \
+          ${{ vars.SLACK_WEBHOOK }}
+      
