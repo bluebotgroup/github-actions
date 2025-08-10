@@ -1,0 +1,12 @@
+# Note: this file is for the github-actions repo itself to call semantic-release.
+# It should not be used by other repositories.
+
+name: Call Semantic Release
+on:
+  push:
+    branches:
+      - main
+jobs:
+  semantic-release:
+    uses: bluebotgroup/github-actions/.github/workflows/semantic-release.yaml@main
+    secrets: inherit
