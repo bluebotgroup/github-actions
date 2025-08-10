@@ -1,0 +1,26 @@
+{
+  "name": "bluebot-github-actions",
+  "version": "1.0.0",
+  "description": "Reusable GitHub Actions workflows for Bluebot",
+  "private": true,
+  "scripts": {
+    "semantic-release": "semantic-release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bluebotgroup/github-actions.git"
+  },
+  "devDependencies": {
+    "semantic-release": "^23.0.0"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/github"
+    ]
+  }
+}
