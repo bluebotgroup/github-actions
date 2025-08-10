@@ -36,10 +36,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npx semantic-release
+          npx semantic-release > release.log 2>&1
           # Extract the published version from the log if present
-          if grep -q 'Published release:' release.log; then
-            version=$(grep 'Published release:' release.log | tail -1 | awk '{print $3}')
+          if grep -q 'Published release' release.log; then
+            version=$(grep 'Published release' release.log | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+' | head -1)
             echo "VERSION=$version" >> $GITHUB_OUTPUT
           else
             echo "VERSION=" >> $GITHUB_OUTPUT
@@ -49,6 +49,6 @@ jobs:
         if: steps.release.outputs.VERSION != ''
         run: |
           curl -X POST -H 'Content-type: application/json' \
-          --data '{"blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": ":sunglasses: *<https://github.com/${{ github.repository }}/releases/tag/${{ steps.release.outputs.VERSION }}|${{ steps.release.outputs.VERSION }}>* of *${{ github.repository }}* released by *${{ github.actor }}*"}}]}' \
+          --data '{"blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": ":sunglasses: *<https://github.com/${{ github.repository }}/releases/tag/v${{ steps.release.outputs.VERSION }}|v${{ steps.release.outputs.VERSION }}>* of *${{ github.repository }}* released by *${{ github.actor }}*"}}]}' \
           ${{ vars.SLACK_WEBHOOK }}
       
