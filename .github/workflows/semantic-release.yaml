@@ -32,6 +32,7 @@ jobs:
         run: npm audit signatures
 
       - name: Release
+        id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -45,8 +46,9 @@ jobs:
           fi
 
       - name: Slack notification
+        if: steps.release.outputs.VERSION != ''
         run: |
           curl -X POST -H 'Content-type: application/json' \
-          --data '{"blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": ":sunglasses: *${VERSION}* of *${{ github.repository }}* released by *${{ github.actor }}*"}}]}' \
+          --data '{"blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": ":sunglasses: *<https://github.com/${{ github.repository }}/releases/tag/${{ steps.release.outputs.VERSION }}|${{ steps.release.outputs.VERSION }}>* of *${{ github.repository }}* released by *${{ github.actor }}*"}}]}' \
           ${{ vars.SLACK_WEBHOOK }}
       
