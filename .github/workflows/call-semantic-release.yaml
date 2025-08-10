@@ -5,7 +5,6 @@ name: Call Semantic Release
 on:
   push:
     branches:
-      - feat/semantic-release # TODO: remove when done testing
       - main
 jobs:
   semantic-release:
