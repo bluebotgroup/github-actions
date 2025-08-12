@@ -38,9 +38,9 @@ jobs:
         run: |
           set +e  # Don't exit on error
           cd $GITHUB_WORKSPACE
-          npx --package semantic-release --package @semantic-release/commit-analyzer --package @semantic-release/release-notes-generator --package @semantic-release/github -- semantic-release > release.log 2>&1
+          npx --package semantic-release --package @semantic-release/commit-analyzer --package @semantic-release/release-notes-generator --package @semantic-release/github --package @semantic-release/changelog --package @semantic-release/git --package @semantic-release/npm -- semantic-release > release.log 2>&1
           semantic_release_exit_code=$?
-          
+
           # Extract the published version from the log if present
           if grep -q 'Published release' release.log; then
             version=$(grep 'Published release' release.log | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+' | head -1)
