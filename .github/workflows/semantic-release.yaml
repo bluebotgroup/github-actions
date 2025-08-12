@@ -41,17 +41,30 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT || github.token }}
         run: |
+          set +e  # Don't exit on error
           npx semantic-release > release.log 2>&1
+          semantic_release_exit_code=$?
+          
           # Extract the published version from the log if present
           if grep -q 'Published release' release.log; then
             version=$(grep 'Published release' release.log | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+' | head -1)
             echo "VERSION=$version" >> $GITHUB_OUTPUT
+            echo "RELEASE_CREATED=true" >> $GITHUB_OUTPUT
+            echo "Release created: v$version"
           else
             echo "VERSION=" >> $GITHUB_OUTPUT
+            echo "RELEASE_CREATED=false" >> $GITHUB_OUTPUT
+            if [ $semantic_release_exit_code -eq 0 ]; then
+              echo "No release necessary"
+            else
+              echo "Semantic release failed with exit code $semantic_release_exit_code"
+              cat release.log  # Show the log for debugging
+              exit $semantic_release_exit_code  # Fail the step with the original exit code
+            fi
           fi
 
       - name: Slack notification
-        if: steps.release.outputs.VERSION != ''
+        if: steps.release.outputs.RELEASE_CREATED == 'true'
         run: |
           curl -X POST -H 'Content-type: application/json' \
           --data '{"blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": ":sunglasses: *<https://github.com/${{ github.repository }}/releases/tag/v${{ steps.release.outputs.VERSION }}|v${{ steps.release.outputs.VERSION }}>* of *${{ github.repository }}* released by *${{ github.actor }}*"}}]}' \
