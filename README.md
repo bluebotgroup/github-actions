@@ -21,6 +21,7 @@ jobs:
   semantic-release:
     uses: bluebotgroup/github-actions/.github/workflows/semantic-release.yaml@main
     secrets:
+      SLACK_WEBHOOK: ${{ vars.SLACK_WEBHOOK }}
       GH_PAT: ${{ secrets.GH_PAT }}
 ```
 
@@ -28,3 +29,4 @@ This will:
 - Run semantic release on pushes to the main branch
 - Send Slack notifications with the repository name and version
 - Use the organization secret `GH_PAT` that belongs to the `bluebot-gh-deploys` Github user
+- Use the organization variable `SLACK_WEBHOOK` that posts a message to our infra-builds channel
