@@ -67,9 +67,12 @@ jobs:
           fi
 
       - name: Slack notification
-        if: steps.release.outputs.RELEASE_CREATED == 'true' && secrets.SLACK_WEBHOOK != ''
+        if: steps.release.outputs.RELEASE_CREATED == 'true'
         run: |
-          curl -X POST -H 'Content-type: application/json' \
-          --data '{"blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": ":sunglasses: *<https://github.com/${{ github.repository }}/releases/tag/v${{ steps.release.outputs.VERSION }}|v${{ steps.release.outputs.VERSION }}>* of *${{ github.repository }}* released by *${{ github.actor }}*"}}]}' \
-          ${{ secrets.SLACK_WEBHOOK }}
-      
+          if [ -n "${{ secrets.SLACK_WEBHOOK }}" ]; then
+            curl -X POST -H 'Content-type: application/json' \
+            --data '{"blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": ":sunglasses: *<https://github.com/${{ github.repository }}/releases/tag/v${{ steps.release.outputs.VERSION }}|v${{ steps.release.outputs.VERSION }}>* of *${{ github.repository }}* released by *${{ github.actor }}*"}}]}' \
+            ${{ secrets.SLACK_WEBHOOK }}
+          else
+            echo "No Slack webhook configured, skipping notification."
+          fi
