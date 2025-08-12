@@ -1,3 +1,6 @@
+
+> ⚠️ **Warning:** This is a public repository. Do not commit sensitive information, secrets, or credentials.
+
 # Github reusable workflows and actions
 
 Use these scripts in your repos to call common workflows and actions.
