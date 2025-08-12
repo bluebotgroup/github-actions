@@ -2,7 +2,7 @@ name: Semantic Release
 
 on:
   workflow_call:
-     secrets:
+    secrets:
       GH_PAT:
         description: "bluebot-gh-deploys user's Personal Access Token for pushing releases"
         required: false
@@ -67,9 +67,9 @@ jobs:
           fi
 
       - name: Slack notification
-        if: steps.release.outputs.RELEASE_CREATED == 'true' && vars.SLACK_WEBHOOK != ''
+        if: steps.release.outputs.RELEASE_CREATED == 'true' && secrets.SLACK_WEBHOOK != ''
         run: |
           curl -X POST -H 'Content-type: application/json' \
           --data '{"blocks": [{"type": "section", "text": {"type": "mrkdwn", "text": ":sunglasses: *<https://github.com/${{ github.repository }}/releases/tag/v${{ steps.release.outputs.VERSION }}|v${{ steps.release.outputs.VERSION }}>* of *${{ github.repository }}* released by *${{ github.actor }}*"}}]}' \
-          ${{ vars.SLACK_WEBHOOK }}
+          ${{ secrets.SLACK_WEBHOOK }}
       
