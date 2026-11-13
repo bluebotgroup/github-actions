@@ -1,3 +1,7 @@
+> **This repository is archived (November 2026).** Its reusable semantic-release workflow is replaced by
+> release-please in [bluebot-platform](https://github.com/bluebotgroup/bluebot-platform), and its only caller, auth0, moved there (`infra/auth0`). The
+> workflows here are turned off.
+
 
 > ⚠️ **Warning:** This is a public repository. Do not commit sensitive information, secrets, or credentials.
 
